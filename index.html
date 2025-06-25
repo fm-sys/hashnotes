@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hashnotes - Private by design. Simple by nature.</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f9f9f9;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    textarea {
+      width: 90%;
+      max-width: 800px;
+      height: 70vh;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      padding: 1rem;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <textarea id="noteInput" placeholder="Start typing..."></textarea>
+
+  <script>
+    const input = document.getElementById('noteInput');
+    const defaultTitle = "Hashnotes - Private by design. Simple by nature.";
+
+    function updateTitle(text) {
+      const trimmed = text.trim();
+      document.title = trimmed
+        ? trimmed.length > 40
+          ? trimmed.slice(0, 40) + "…"
+          : trimmed
+        : defaultTitle;
+    }
+
+    // Load note from URL hash
+    function loadNoteFromHash() {
+      const hash = location.hash.slice(1);
+      if (hash) {
+        try {
+          const decoded = decodeURIComponent(hash);
+          input.value = decoded;
+          updateTitle(decoded);
+        } catch {
+          input.value = '[Invalid text encoding]';
+          document.title = defaultTitle;
+        }
+      }
+    }
+
+    // Update URL hash and tab title as you type
+    input.addEventListener('input', () => {
+      const text = input.value;
+      const encoded = encodeURIComponent(text.trim());
+      history.replaceState(null, '', '#' + encoded);
+      updateTitle(text);
+    });
+
+    loadNoteFromHash();
+  </script>
+</body>
+</html>
